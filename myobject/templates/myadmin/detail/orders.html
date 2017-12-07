@@ -1,0 +1,35 @@
+{% extends 'myadmin/base.html'%}
+{% block mainbody%}
+<h3>查看收货人信息</h3>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>订单id</th>
+      <th>收货人id</th>
+      <th>收货人</th>
+      <th>收货地址</th>
+      <th>电话</th>
+      <th>下单时间</th>
+      <th>总价</th>
+      <th>订单状态</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  {% for vo in orderslist %}
+  <tr>
+    <td>{{ vo.id }}</td>
+    <td>{{ vo.uid }}</td>
+    <td>{{ vo.linkman }}</td>
+    <td>{{ vo.address }}</td>
+    <td>{{ vo.phone }}</td>
+    <td>{{ vo.addtime }}</td>
+    <td>{{ vo.total }}</td>
+    <td>{% if vo.status == 3 %}<span>无效订单</span>{% elif vo.status == 2 %}<span>已完成订单</span>{% elif vo.status == 1 %}<span>已发货订单</span>{% else %}<span>新订单</span>{% endif %}
+      {% if vo.status == 0 %} <a href="{% url 'myadmin_orderlsdel' vo.id %}" class="view-link">删除</a> <a href="{% url 'myadmin_orderlsfh' vo.id %}" class="view-link">发货</a> {% endif %} <a href="{% url 'myadmin_detail' vo.id %}">查看详情</a></td>
+  </tr>
+  {% endfor %}
+    </tbody>
+  
+</table>
+{%endblock%}

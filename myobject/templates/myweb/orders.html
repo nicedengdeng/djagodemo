@@ -1,0 +1,203 @@
+{% extends 'myweb/base.html' %}
+{% load static from staticfiles %}
+
+{% block myloadcss %}
+<script type="text/javascript" src="{% static 'myweb/js/rem.js' %}"></script>
+<script type="text/javascript" src="{% static 'myweb/js/topNav.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'myweb/css/cart.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'myweb/css/cart-app.css' %}">
+<style type="text/css">
+span {
+	margin-right: 15px;
+	font-size: 16px;
+}
+.aaname {
+	width: 300px;
+}
+.dd {
+	color: #f0ad4e;
+	font-weight: bolder;
+}
+</style>
+{% endblock %}
+{% block mainbody %}
+</head>
+
+<body class="cart-app">
+<!-- 导航 -->
+<div class="layout-header" id="scroll-wrap">
+<nav class="navbar navbar-default header hidden-xs hidden-sm">
+  <div class="container clearfix">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="layout-header-logo navbar-left"> <a target="_blank" href="./index.html" class="layout-header-logo-link" alt="魅族科技"> <img src="{% static 'myweb/img/logo.png' %}"> </a> </div>
+      <div class="navbar-left">
+        <ol class="breadcrumb">
+          <li class="active">购物车</li>
+          <li class="dd">确认订单</li>
+          <li>在线支付</li>
+          <li>完成 </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- 用户信息表单 -->
+<center>
+<div class="alert alert-danger" role="alert"> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> 确认商品信息与个人信息无误后点击---------
+  <button type="submit" class="btn btn-default " onClick="isreadonly()">确认信息</button>
+</div>
+<form action="{% url 'ordersinsert' %}" method="post" class="form-inline">
+  {% csrf_token %} 
+  
+  <!-- 用户信息 -->
+  <div class="form-group">
+    <label  for="exampleInputEmail3">用户名:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <input type="text" class="form-control" id="exampleInputEmail3" name ="linkman" value="{{request.session.webuser.name}}" >
+  </div>
+  <br/>
+  <br/>
+  <div class="form-group">
+    <label  for="exampleInputPassword3">电&nbsp;&nbsp;话：&nbsp;&nbsp;&nbsp;</label>
+    <input type="text" class="form-control" id="input" name ="phone"  value="{{request.session.webuser.phone}}" >
+  </div>
+  <br/>
+  <br/>
+  <div class="form-group">
+    <label  for="exampleInputPassword3">邮&nbsp;&nbsp;编：&nbsp;&nbsp;&nbsp;</label>
+    <input type="text" class="form-control" id="exampleInputEmail3" name ="code" value="{{request.session.webuser.code}}" >
+  </div>
+  <br/>
+  <br/>
+  <div class="form-group">
+    <label  for="exampleInputPassword3">收货地址：</label>
+    <input type="text" class="form-control" id="exampleInputEmail3" name ="address" value="{{request.session.webuser.address}}" >
+  </div>
+  <br/>
+  <br/>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox">
+      设为默认地址 </label>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> </div>
+  </center>
+  <!-- 移动端结构 -->
+  <div class="scroll-view">
+    <header id="header" class="header">
+      <div class="logo"> <a href="./index.html"> <img src="{% static 'myweb/img/app/mlogo1.jpg' %}"> </a> </div>
+      <div class="qtool"> <a id="btn-search"> <i class="glyphicon  glyphicon-search"></i> </a> <a href="#"> <i class="glyphicon  glyphicon-shopping-cart"></i> </a> <a id="user-name" href="#"> <i class="glyphicon glyphicon-user"></i> </a> </div>
+    </header>
+  </div>
+  </div>
+  <!-- 导航 E--> 
+  <!-- 主内容区域 -->
+  <div class="mainbody cart">
+    <div class="container"> 
+      <!-- 购物车详情头 -->
+      <table class="cart-header">
+        <tbody>
+          <tr> 
+            <!-- <td class="cart-col-select col-md-3 col-xs-3 col-sm-3">选择</td> -->
+            <td class="cart-col-name col-md-3 hidden-xs hidden-sm">商品</td>
+            <td class="cart-col-price col-md-2 hidden-xs hidden-sm">单价(元)</td>
+            <td class="cart-col-number col-md-2 hidden-xs hidden-sm">数量</td>
+            <td class="cart-col-total col-md-1 hidden-xs hidden-sm">小计(元)</td>
+            <!-- <td class="cart-col-ctrl col-md-1 hidden-xs hidden-sm">操作</td> --> 
+          </tr>
+        </tbody>
+      </table>
+      <!-- 购物车详情头 E-->
+      
+      <div class="cart-merchant-list">
+        <div class="cart-merchant">
+          <table class="cart-merchant-body">
+            <tbody>
+            
+            {% for shop in request.session.orderlist.values %}
+            <tr class="cart-product">
+              <td class="cart-col-select col-md-3 col-xs-4 col-sm-4"><div class="" gid="{{shop.id}}" price="{%widthratio shop.price 1 shop.m%}"></div>
+                <a href="#" class="cart-product-link" target="_blank"> <img src="/static/goods/s_{{shop.picname}}" class="cart-product-img" alt="{{ shop.goods }}" width="50" > </a></td>
+              <td class="cart-col-name col-md-3 col-xs-8 col-sm-8"><a href="meilanx.html" class="cart-product-link" target="_blank">
+                <p>{{ shop.goods }}</p>
+                </a>
+                <p class=""> <span class="cart-product-price">{{ shop.price }}</span> </p>
+                <div class="cart-col-number">
+                  <div class="cart-product-number-adder">
+                    <p class="cart-product-number-max show"></p>
+                    <div class="mz-adder">
+                      <button class="mz-adder-subtract disabled"></button>
+                      <div class="mz-adder-num">
+                        <input class="mz-adder-input" value="1" type="text">
+                      </div>
+                      <button class="mz-adder-add"></button>
+                    </div>
+                  </div>
+                </div></td>
+              <td class="cart-col-price col-md-2 hidden-xs hidden-sm"><p> <span class="cart-product-price">{{ shop.price }}</span> </p></td>
+              <td class="cart-col-number col-md-2 hidden-xs hidden-sm"><div class="cart-product-number-adder">
+                  <p class="cart-product-number-max show"></p>
+                  <div class="mz-adder">
+                    <div class="mz-adder-num">
+                      <input class="mz-adder-input" value="{{ shop.m }}" type="text" readonly>
+                    </div>
+                  </div>
+                </div></td>
+              <td class="cart-col-total col-md-1 hidden-xs hidden-sm"><span class="cart-product-price total">{% widthratio shop.price 1 shop.m %}</span></td>
+            </tr>
+            {% endfor %}
+              </tbody>
+            
+          </table>
+        </div>
+      </div>
+      <!-- 购物清单信息列表 E--> 
+      
+      <!-- 购物清单信息列表 E--> 
+    </div>
+    <!-- 结算详情 -->
+    <div class="cart-footer" id="cartFooter">
+      <div class="container">
+        <div class="cart-footer-right col-md-6 col-md-offset-1 col-sm-offset-2 col-xs-8 col-sm-6"> 
+          <!-- 					<span class="cart-footer-sum">
+						<span class="cart-footer-text">合计</span>
+						<span class="cart-footer-num red" id="totalDiscount">￥{{request.session.total}}</span>
+						<span id="totalDiscount">元(不含运费)</span>
+
+					</span> --> 
+          
+          <span class="cart-footer-sum"> <span class="cart-footer-text">已优惠</span> <span class="cart-footer-num red" id="totalDiscount">0.00</span> <span class="cart-footer-text">元， 合计(不含运费)：</span> <span class="cart-footer-num red">￥{{request.session.total}}</span> 
+          <!-- <span class="cart-footer-total" id="totalPrice"></span> --> 
+          </span>
+          <button class="btn ">提交</button>
+        </div>
+      </div>
+    </div>
+    <!-- 结算详情 E--> 
+  </div>
+</form>
+<!-- 主内容区域 E--> 
+
+<!-- 返回顶部 E--> 
+<script type="text/javascript">//回顶部
+      		// backTop();
+      		//全选
+      		allSelect();
+      		//商品数量加减
+      		// cartAddMin();
+      		loadTotal();
+      		var gidlist=[];
+
+	</script> 
+<script type="text/javascript">
+		function isreadonly(){
+		var obj = document.getElementsByTagName("input");
+		// console.log(obj)
+		for(var i=0;i<obj.length;i++){
+			obj[i].setAttribute("readonly",true);
+		
+		}
+		// obj.style.backgroundColor="#d2d2d2";
+		} 
+
+
+	</script> 
+{% endblock %}
